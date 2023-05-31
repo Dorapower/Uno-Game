@@ -1,0 +1,14 @@
+[metadata]
+name = "uno-game"
+version = "0.0.1"
+description = "A uno game"
+url = "https://github.com/Dorapower/Uno-Game"
+license = "MIT"
+author = "Dorapower"
+author_email = "thatisluo@outlook.com"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Development Status :: 1 - Planning",
+]
