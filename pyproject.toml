@@ -1,5 +1,5 @@
 [project]
-name = "uno-game"
+name = "pyuno-game"
 version = "0.0.1"
 description = "A uno game"
 readme = "README.md"
