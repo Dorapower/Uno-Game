@@ -1,17 +1,32 @@
-[metadata]
+[project]
 name = "uno-game"
 version = "0.0.1"
 description = "A uno game"
-url = "https://github.com/Dorapower/Uno-Game"
-license = "MIT"
-author = "Dorapower"
-author_email = "thatisluo@outlook.com"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-    "Development Status :: 1 - Planning",
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Dorapower", email = "thatisluo@outlook.com"}
 ]
+keywords = [
+    "uno",
+    "game",
+]
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Developers",
+    "Topic :: Games/Entertainment :: Board Games",
+    "Typing :: Typed",
+]
+dependencies = [
+]
+
+[project.urls]
+Homepage = "https://github.com/Dorapower/Uno-Game"
+Documentation = "https://github.com/Dorapower/Uno-Game/wiki"
+Repository = "https://github.com/Dorapower/Uno-Game.git"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
