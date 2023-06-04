@@ -1,6 +1,6 @@
 [project]
 name = "pyuno-game"
-version = "0.0.1"
+version = "0.0.4"
 description = "A uno game"
 readme = "README.md"
 license = {file = "LICENSE"}
