@@ -1,6 +1,6 @@
 [project]
 name = "pyuno-game"
-version = "0.0.4"
+version = "0.1.4"
 description = "A uno game"
 readme = "README.md"
 license = {file = "LICENSE"}
@@ -12,7 +12,7 @@ keywords = [
     "game",
 ]
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
     "License :: OSI Approved :: MIT License",
