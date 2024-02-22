@@ -5,6 +5,11 @@ from .context import Context, Round
 
 
 class Rule:
+    """
+    The rule is responsible for the game logic.
+    It should contain no information related the game state and only have methods to manipulate it.
+    But rules can have variants which can be passed as parameters to the constructor.
+    """
     def init_game(self, ctx: Context):
         raise NotImplementedError
 
@@ -16,9 +21,11 @@ class Rule:
 
 
 class ExampleRule(Rule):
-    """Similar to UNO but simplified to have no action cards etc."""
+    """
+    Similar to UNO but simplified to have no action cards etc.
+    """
     COLORS: ClassVar[tuple[str, ...]] = ('red', 'blue', 'green', 'yellow')
-    NUMBERS: ClassVar[tuple[int, ...]] = tuple(range(10))
+    NUMBERS: ClassVar[tuple[int, ...]] = tuple(range(8))
     HAND_SIZE: ClassVar[int] = 7
 
     rng: random.Random
