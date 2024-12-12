@@ -1,12 +1,12 @@
 import logging
 
 from uno.engine.game import Game
-from uno.engine.rule import ExampleRule
-from uno.engine.player import DrawPlayer
+from uno.engine.rule_old import ExampleRule
+from uno.rules.base import rule
 
 
 def main():
-    game = Game(rule=ExampleRule(), n_players=2)
+    game = Game(rule=rule, n_players=2)
     game.start()
 
 

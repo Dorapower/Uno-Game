@@ -1,4 +1,5 @@
 import logging
+import datetime
 
 from .player import Player, Request, DrawPlayer
 from .rule import Rule
@@ -17,8 +18,8 @@ class Game:
 
     history: list[tuple[int, str]]
 
-    def __init__(self, rule: Rule, n_players: int = 4):
-        self.context = Context(n_players)
+    def __init__(self, rule: Rule, n_players: int = 4, seed: int | None = None):
+        self.context = Context(n_players, seed=seed)
         self.players = [DrawPlayer(str(i)) for i in range(n_players)]
         self.history = []
 
