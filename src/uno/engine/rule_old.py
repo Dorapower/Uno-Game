@@ -43,7 +43,7 @@ class ExampleRule(Rule):
         ctx.scoreboard = [0 for _ in range(ctx.player_count)]
         ctx.current_round = Round(
             hands=[[] for _ in range(ctx.player_count)],
-            deck=[color + str(number) for color in self.COLORS for number in self.NUMBERS],
+            draw=[color + str(number) for color in self.COLORS for number in self.NUMBERS],
             discard=[],
         )
         self._shuffle_deck(ctx)
@@ -52,21 +52,21 @@ class ExampleRule(Rule):
                 self._draw_card(ctx, idx)
 
     def _shuffle_deck(self, ctx: Context):
-        self.rng.shuffle(ctx.current_round.deck)
+        self.rng.shuffle(ctx.current_round.draw)
 
     def _refill_deck(self, ctx: Context):
         round_ = ctx.current_round
-        round_.deck.extend(round_.discard)
+        round_.draw.extend(round_.discard)
         self._shuffle_deck(ctx)
         round_.discard.clear()
 
     def _draw_card(self, ctx: Context, player: int):
         round_ = ctx.current_round
-        if len(round_.deck) == 0:
+        if len(round_.draw) == 0:
             self._refill_deck(ctx)
-            if len(round_.deck) == 0:
+            if len(round_.draw) == 0:
                 raise RuntimeError('No cards left in deck')
-        round_.hands[player].append(round_.deck.pop())
+        round_.hands[player].append(round_.draw.pop())
 
     def step(self, ctx: Context, card: str | None) -> tuple[int, str]:
         """
@@ -113,7 +113,7 @@ class StandardRule(Rule):
         :param ctx:
         :return:
         """
-        ctx.current_round.deck = [f"{color}_{number}" for color in self.COLORS for number in self.NUMBERS]
+        ctx.current_round.draw = [f"{color}_{number}" for color in self.COLORS for number in self.NUMBERS]
         self._shuffle_deck(ctx)
         for _ in range(self.HAND_SIZE):
             for idx in range(ctx.player_count):
@@ -125,7 +125,7 @@ class StandardRule(Rule):
         :param ctx:
         :return:
         """
-        ctx.rng.shuffle(ctx.current_round.deck)
+        ctx.rng.shuffle(ctx.current_round.draw)
 
     def _refill_deck(self, ctx: Context):
         """
@@ -133,11 +133,11 @@ class StandardRule(Rule):
         :param ctx:
         :return:
         """
-        assert len(ctx.current_round.deck) == 0
+        assert len(ctx.current_round.draw) == 0
 
         round_ = ctx.current_round
-        round_.deck.extend(round_.discard)
-        top_card = round_.deck.pop()  # the top card is left in the discard
+        round_.draw.extend(round_.discard)
+        top_card = round_.draw.pop()  # the top card is left in the discard
         round_.discard = [top_card]
 
         self._shuffle_deck(ctx)
@@ -150,12 +150,12 @@ class StandardRule(Rule):
         :return: the card drawn. None if no card left
         """
         round_ = ctx.current_round
-        if len(round_.deck) == 0:  # fill the deck if necessary
+        if len(round_.draw) == 0:  # fill the deck if necessary
             self._refill_deck(ctx)
-        if len(round_.deck) == 0:  # no card left in either deck or discard
+        if len(round_.draw) == 0:  # no card left in either deck or discard
             return None
 
-        card = round_.deck.pop()
+        card = round_.draw.pop()
         round_.hands[player].append(card)
         return card
 
