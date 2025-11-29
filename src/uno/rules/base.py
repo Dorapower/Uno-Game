@@ -50,7 +50,7 @@ def init_round(ctx: Context):
             hands[idx].append(draw.pop())
 
     # discard pile
-    while draw[0].symbol == 'wild_draw_4':
+    while draw[0].color == 'wild':
         shuffle(ctx, draw)
 
     discard = [draw.pop(0)]
@@ -61,6 +61,7 @@ def init_round(ctx: Context):
         discard = discard,
         hands = hands,
     )
+    ctx.current_round.last_card = discard[-1]
 
 
 def round_is_over(round_: Round) -> bool:
@@ -82,6 +83,7 @@ def init_game(ctx: Context):
         raise RuntimeError('Player count must be between 2 and 10')
     ctx.scoreboard = [0] * ctx.player_count
     ctx.rounds = -1
+    init_round(ctx)
 
 
 def game_is_over(ctx: Context):
@@ -145,27 +147,76 @@ def is_playable(ctx: Context, card: Card) -> bool:
     :param card: the card to check
     :return: True if the card can be played
     """
-    last_card = ctx.current_round.last_card
+    round_ = ctx.current_round
+    # If there are blocking effects, no card is playable (must draw/resolve effect)
+    blocking_effects = {'skip', 'draw_2', 'wild_draw_4'}
+    if any(eff in round_.active_effects for eff in blocking_effects):
+        return False
+
+    last_card = round_.last_card
+    # Wild cards are always playable
+    if card.color == 'wild':
+        return True
+    # Otherwise match color or symbol
     return card.color == last_card.color or card.symbol == last_card.symbol
 
 
-def step(ctx: Context, card: Card | None):
+def update_score(ctx: Context):
+    """
+    Calculate scores at the end of a round and update scoreboard.
+    Winner gets sum of values of cards in other players' hands.
+    """
+    round_ = ctx.current_round
+    if round_ is None:
+        return
+
+    winner_idx = -1
+    for idx, hand in enumerate(round_.hands):
+        if len(hand) == 0:
+            winner_idx = idx
+            break
+    
+    if winner_idx != -1:
+        points = 0
+        for hand in round_.hands:
+            for card in hand:
+                if isinstance(card.symbol, int):
+                    points += card.symbol
+                elif str(card.symbol) in ACTION_VALUES:
+                    points += ACTION_VALUES[str(card.symbol)]
+        
+        ctx.scoreboard[winner_idx] += points
+
+
+def step(ctx: Context, move: tuple):
     """
     main logic of the game. handle the last action and wait for the next one
     :param ctx:
-    :param card: card played by the current player, None if the player decided to draw a card
+    :param move: tuple where first element is Card or None (to draw), second is color (if wild)
     :return:
     """
-    round_, effects = ctx.current_round, ctx.current_round.active_effects
-
+    round_ = ctx.current_round
+    
     if round_ is None or round_is_over(round_):
+        if round_ is not None:
+            update_score(ctx)
         init_round(ctx)
-        return
+        return move
+
+    effects = round_.active_effects
+    
+    card = move[0]
+    color_chosen = move[1] if len(move) > 1 else None
+
+    # Validate move
+    if card is not None and not is_playable(ctx, card):
+        # Invalid move, treat as draw/pass
+        card = None
 
     # round is not over
     round_.turns += 1
 
-    if card is None:  # player decided to not play
+    if card is None:  # player decided to not play (draw)
         match effects:
             case _ if 'skip' in effects:
                 effects.remove('skip')
@@ -180,14 +231,27 @@ def step(ctx: Context, card: Card | None):
             case _:
                 # player decided to draw
                 # newly drawn card will be played if possible
-                card = draw_card(ctx, round_.current_player)
-                if not is_playable(ctx, card):
-                    card = None
+                new_card = draw_card(ctx, round_.current_player)
+                if new_card and is_playable(ctx, new_card):
+                    # Auto-play drawn card if playable
+                    # If it's wild, we default to 'red' since we can't ask player again in this flow
+                    # This is a limitation of the current synchronous engine
+                    card = new_card
+                    if card.color == 'wild':
+                        color_chosen = 'red' 
 
-    if card is not None:  # player decided to play a card
-        round_.last_card = card
+    if card is not None:  # player decided to play a card (or auto-played)
+        # Update last_card for playability checks
+        if card.color == 'wild':
+            if color_chosen not in COLORS[:-1]: # Ensure valid color
+                 color_chosen = 'red'
+            round_.last_card = Card(color_chosen, card.symbol)
+        else:
+            round_.last_card = card
+            
         round_.discard.append(card)
         round_.hands[round_.current_player].remove(card)
+        
         match card.symbol:  # update active effects
             case 'reverse' if 'reverse' in effects:
                 effects.remove('reverse')
@@ -199,6 +263,11 @@ def step(ctx: Context, card: Card | None):
         round_.current_player = (round_.current_player - 1) % ctx.player_count
     else:
         round_.current_player = (round_.current_player + 1) % ctx.player_count
+        
+    final_move = (card,)
+    if card and card.color == 'wild':
+        final_move = (card, color_chosen)
+    return final_move
 
 
 rule: Rule = Rule(init_game, step, game_is_over)

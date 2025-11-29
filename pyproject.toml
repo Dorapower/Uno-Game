@@ -1,6 +1,7 @@
 [project]
 name = "pyuno-game"
-version = "0.2.0"
+version = "0.2.0a1"
+requires-python = ">=3.11"
 description = "A uno game"
 readme = "README.md"
 license = {file = "LICENSE"}
@@ -21,6 +22,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
+    "pytest",
 ]
 
 [project.urls]

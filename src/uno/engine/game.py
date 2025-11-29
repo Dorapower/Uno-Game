@@ -1,5 +1,6 @@
 import logging
 import datetime
+from typing import Any
 
 from .player import Player, Request, DrawPlayer
 from .rule import Rule
@@ -16,7 +17,7 @@ class Game:
     rule: Rule
     players: list[Player]
 
-    history: list[tuple[int, str]]
+    history: list[Any]
 
     def __init__(self, rule: Rule, n_players: int = 4, seed: int | None = None):
         self.context = Context(n_players, seed=seed)
@@ -30,7 +31,13 @@ class Game:
         hand_sizes = list(map(len, self.context.current_round.hands))
         scores = self.context.scoreboard
         latest_move = self.history  # survival is more important than efficiency
-        return Request(hand, hand_sizes, scores, latest_move)
+        
+        # Get top card (last_card) from current round
+        top_card = None
+        if self.context.current_round:
+            top_card = self.context.current_round.last_card
+
+        return Request(hand, hand_sizes, scores, latest_move, top_card)
 
     def start(self):
         """
@@ -42,6 +49,6 @@ class Game:
         while not self.rule.is_over(self.context):
             cur_player = self.context.current_round.current_player
             request = self.build_request(cur_player)
-            card = self.players[cur_player].play(request)
-            self.history.append(self.rule.step(self.context, card))
-            logger.info(f"Player {cur_player} played {card}")
+            move = self.players[cur_player].play(request)
+            self.history.append(self.rule.step(self.context, move))
+            logger.info(f"Player {cur_player} played {move}")

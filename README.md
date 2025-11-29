@@ -1,29 +1,75 @@
-# Uno-Game
-A Uno game implemented in Python
+# Uno Game
 
-Currently a placeholder but may be updated in the future.
+A robust Python implementation of the classic Uno card game, featuring a flexible game engine, command-line interface, and AI opponents.
+
+## Features
+
+*   **Flexible Engine**: Designed to support custom rules and extensions.
+*   **Command-Line Interface (CLI)**: Playable terminal-based game against bots.
+*   **AI Opponents**: Includes `RandomPlayer` bots to play against.
+*   **Type Safe**: Built with modern Python type hinting for reliability.
+*   **Tested**: Comprehensive test suite using `pytest`.
 
 ## Installation
 
-The package is available on [PyPI](https://pypi.org/project/pyuno-game/), and can be installed with pip:
+Requires Python 3.11 or higher.
+
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/Dorapower/Uno-Game.git
+    cd Uno-Game
+    ```
+
+2.  Create and activate a virtual environment:
+    ```bash
+    python -m venv .venv
+    # Windows
+    .venv\Scripts\activate
+    # Linux/Mac
+    source .venv/bin/activate
+    ```
+
+3.  Install dependencies:
+    ```bash
+    pip install -e .
+    pip install pytest
+    ```
+
+## Usage
+
+To start a game against bots via the CLI:
 
 ```bash
-pip install pyuno-game
+python src/cli.py
 ```
+
+Follow the on-screen prompts to choose the number of players and make your moves.
+
+## Development
+
+### Running Tests
+
+The project uses `pytest` for testing. To run the test suite:
+
+```bash
+pytest
+```
+
+### Project Structure
+
+*   `src/uno/engine`: Core game logic (Game, Player, Context).
+*   `src/uno/rules`: Rule implementations (Standard Uno).
+*   `src/cli.py`: Command-line interface entry point.
+*   `tests/`: Unit tests.
 
 ## Rules
 
-Official Rules can be found [here](https://service.mattel.com/us/instruction_sheets.aspx).
-Do note that there are many variations of the game (also known as Theme Packs) and the rules can be very different.
-The target of this project is to implement the original uno game, and potentially allow for customisation as extensions.
+This implementation follows the standard Uno rules (based on the 2008 instruction sheet).
+- **Setup**: 7 cards per player.
+- **Objective**: Be the first to get rid of all your cards.
+- **Action Cards**: Draw 2, Skip, Reverse, Wild, Wild Draw 4.
+- **Scoring**: Winner gets points based on cards left in opponents' hands.
 
-Some of the most popular [citation needed] rules is listed below, and also can be found under [rules](rules/).
+## License
 
-- UNO Flip™ (2019) - [rules](rules/GDG37-Eng.pdf)
-- UNO® Card Game (2016) - [rules](rules/FFK04-Eng.pdf)
-- UNO® Card Game (2010) - [rules](rules/41940-Eng.pdf)
-- UNO® Card Game (2008?) - [rules](rules/UNO%20Basic%20IS.pdf)
-
-> Note: The last one above is wildly used by 3rd party websites including [Wikipedia](https://en.wikipedia.org/wiki/Uno_(card_game)#cite_note-UNO-6)
-and [Mattel Wiki](https://mattel.fandom.com/wiki/UNO#cite_note-UNO-4), but it can't be found on the official website
-(Although the file is still on the server, the product page offers a different version of the rules, which is also provided above (the third one)).
+[MIT](LICENSE)

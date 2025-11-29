@@ -30,7 +30,7 @@ class Context:
     seed: InitVar[int | None] = field(default=None, kw_only=True)
 
     scoreboard: list[int] | None = field(init=False, default=None)
-    rounds: int | None = field(init=False, default=None)
+    rounds: int = field(init=False, default=0)
     current_round: Round | None = field(init=False, default=None)
 
     rng: random.Random = field(init=False)
